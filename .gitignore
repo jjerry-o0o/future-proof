@@ -1,0 +1,10 @@
+# Obsidian 설정 파일 제외 (필요에 따라 주석 처리)
+.obsidian/workspace
+.obsidian/workspace.json
+.obsidian/cache
+
+# macOS 시스템 파일
+.DS_Store
+
+# 기타 무시할 파일/폴더
+.trash/
