@@ -8,3 +8,15 @@
 
 # 기타 무시할 파일/폴더
 .trash/
+
+# Quartz 빌드 및 배포 파일
+.gitignore
+node_modules
+public
+prof
+tsconfig.tsbuildinfo
+.obsidian
+.quartz-cache
+private/
+.replit
+replit.nix
