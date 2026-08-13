@@ -20,3 +20,5 @@ tsconfig.tsbuildinfo
 private/
 .replit
 replit.nix
+
+.idea/**
