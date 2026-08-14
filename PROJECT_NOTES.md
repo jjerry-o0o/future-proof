@@ -1,88 +1,149 @@
-# Future Proof 작업 노트
+# Future Proof 블로그 작업 메모
 
-Obsidian으로 글을 작성하고 Quartz로 정적 블로그를 배포하는 저장소다.
-이 파일은 블로그 콘텐츠가 아니며, 사람과 AI 에이전트가 작업할 때 참고한다.
+Obsidian으로 글을 작성하고 Quartz로 정적 블로그를 생성해 GitHub Pages에 배포하는 저장소다.
 
 ## 저장소와 배포
 
 - GitHub 저장소: `jjerry-o0o/future-proof`
 - 기본 브랜치: `main`
-- 사이트 주소: `https://jjerry-o0o.github.io/future-proof/`
-- 배포 방식: GitHub Pages + GitHub Actions
-- 워크플로우: `.github/workflows/deploy.yml`
+- 사이트 주소: <https://jjerry-o0o.github.io/future-proof/>
+- 배포 워크플로: `.github/workflows/deploy.yml`
 
-`main`에 푸시하면 GitHub Actions가 다음을 수행한다.
+`main` 브랜치에 push하면 GitHub Actions가 `npm ci`와 `npx quartz build`를 실행한 뒤 `public/` 결과물을 GitHub Pages에 배포한다.
 
-1. `npm ci`로 의존성 설치
-2. `npx quartz build`로 사이트 생성
-3. `public/` 결과물을 GitHub Pages에 배포
-
-GitHub 저장소 설정의 **Settings → Pages → Source**는 `GitHub Actions`여야 한다.
-
-## 작성자 정보
-
-이 저장소의 로컬 Git 작성자 정보는 다음과 같다.
-
-- 이름: `jjerry-o0o`
-- 이메일: `alfndp25@gmail.com`
+GitHub 저장소의 **Settings → Pages → Source**는 `GitHub Actions`여야 한다.
 
 ## 주요 경로
 
 | 경로 | 용도 |
 | --- | --- |
-| `content/` | 블로그에 게시되는 Markdown 글 |
-| `content/index.md` | 사이트 홈 화면 |
-| `quartz.config.ts` | 사이트 제목, 주소, 언어, 플러그인 등의 Quartz 설정 |
-| `quartz.layout.ts` | 페이지 레이아웃 설정 |
-| `.github/workflows/deploy.yml` | GitHub Pages 자동 배포 워크플로우 |
-| `.obsidian/` | Obsidian 로컬 설정 |
-| `PROJECT_NOTES.md` | 이 작업 안내 문서. 블로그에는 게시되지 않음 |
+| `content/` | 블로그에 게시할 Markdown 글 |
+| `content/index.md` | 홈페이지 |
+| `content/<카테고리>/<글>.md` | 폴더 기반 카테고리와 글 |
+| `quartz.config.ts` | 제목, URL, 색상, 폰트, Quartz 플러그인 설정 |
+| `quartz.layout.ts` | 사이드바, 검색, 목차, 그래프, 푸터의 배치 |
+| `quartz/styles/custom.scss` | 추가 CSS 스타일 |
+| `.github/workflows/deploy.yml` | GitHub Pages 자동 배포 |
+| `.obsidian/` | 이 저장소를 Obsidian vault로 열 때 쓰는 설정 |
 
-Quartz는 `content/` 폴더만 블로그 콘텐츠로 처리한다. 저장소 루트의 문서는 배포 사이트에 올라가지 않는다.
+`content/` 이외의 문서는 게시되지 않는다. 작업 메모는 이 파일에 작성한다.
 
-## 글 발행 흐름
+## 글 작성과 분류
 
-1. Obsidian에서 `content/` 안에 `.md` 글을 만든다.
-2. 필요하면 YAML 프론트매터를 작성한다.
-3. 저장 후 Git 변경 사항을 커밋한다.
-4. `main`으로 푸시한다.
-5. GitHub Actions의 `Deploy Quartz site to GitHub Pages` 성공 여부를 확인한다.
+글은 `content/` 아래에 Markdown 파일로 만든다. Explorer 사이드바는 폴더 구조를 자동으로 표시한다.
 
-예시:
+```text
+content/
+├─ javascript/
+│  └─ es5 vs es6, 예제 코드 정리.md
+└─ react/
+   └─ 상태관리.md
+```
+
+태그는 폴더와 별도로 여러 글을 가로질러 분류할 때 사용한다.
 
 ```md
 ---
-title: 첫 글
-date: 2026-07-27
+title: ES5와 ES6 비교하기, 예제 코드 정리
+date: 2024-09-04
+modified: 2026-08-13
 tags:
-  - 기록
+  - JavaScript
+  - ES6
 ---
-
-글 내용
 ```
 
-## 자주 쓰는 명령
+- `date`: 작성일
+- `modified`: 수정일
+- 날짜를 생략하면 Git 커밋 날짜 또는 파일 수정 시각이 사용될 수 있다.
+
+헤딩은 순수 Markdown으로 작성한다. 헤딩 안에 `<font>` 같은 HTML 태그를 넣으면 목차에도 태그가 표시될 수 있다.
+
+```md
+## ES란?
+### let과 const 추가
+```
+
+## 로컬 미리보기
+
+`future-proof` 폴더에서 실행한다.
 
 ```bash
-# 의존성 설치
-npm i
+npx quartz build --serve
+```
 
-# 로컬 빌드
-npx quartz build
+터미널에 나오는 로컬 주소(일반적으로 `http://localhost:8080`)에서 실제 Quartz 렌더링 결과를 본다. `content/` 또는 스타일 파일을 저장하면 자동으로 다시 빌드된다.
 
-# Git 상태 확인
+`flexsearch` 관련 파일을 찾을 수 없다는 오류가 나면 의존성을 다시 설치한다.
+
+```bash
+npm ci
+```
+
+`CustomOgImages: fetch failed` 오류가 나면 `quartz.config.ts`의 아래 줄을 주석 처리한다. 이는 공유용 OG 이미지만 끄며 사이트 표시에는 영향이 없다.
+
+```ts
+// Plugin.CustomOgImages(),
+```
+
+## 디자인 수정
+
+### 설정과 레이아웃
+
+- `quartz.config.ts`
+  - `pageTitle`: 사이트 제목
+  - `theme.typography`: 글꼴
+  - `theme.colors`: 라이트/다크 테마 색상
+  - `Plugin.TableOfContents({ maxDepth: 2 })`: 목차를 H2까지만 표시
+- `quartz.layout.ts`
+  - `left`: 왼쪽 사이드바
+  - `right`: 오른쪽 사이드바(그래프, 목차, 백링크)
+  - `footer`: 하단 링크
+
+### 추가 CSS
+
+`quartz/styles/custom.scss`에서 본문과 제목을 조절한다.
+
+```scss
+article {
+  font-size: 1.1rem;
+  line-height: 1.8;
+}
+
+article h1,
+article h2,
+article h3 {
+  color: #92cddc;
+}
+
+:root[saved-theme="light"] .article-title {
+  color: #575757;
+}
+
+:root[saved-theme="dark"] .article-title {
+  color: #f2f2f2;
+}
+```
+
+`article h1, h2, h3`로 작성하면 `h2`, `h3`가 본문 밖에도 적용되므로 각 선택자에 `article`을 붙인다.
+
+## 커밋 전 확인
+
+```bash
 git status
-
-# 글 또는 설정 변경 발행
-git add <파일>
-git commit -m "설명"
+git add content quartz.config.ts quartz/styles/custom.scss
+git commit -m "docs: add JavaScript notes"
 git push origin main
 ```
 
-## 주의 사항
+- `.idea/`: 개인 IDE 설정이므로 커밋하지 않는다. `.gitignore`에 `.idea/`를 추가한다.
+- `node_modules/`, `public/`, `.quartz-cache/`, `private/`: 커밋하지 않는다.
+- 붙여넣은 이미지가 글에서 사용된다면 `content/attachments/` 같은 위치에 두고 함께 커밋한다.
+- `.obsidian/`은 현재 추적 중인 파일이므로, 플러그인 설정 변경을 보존하려는 경우에만 커밋한다.
 
-- `content/index.md`가 없으면 홈 화면용 HTML이 생성되지 않아 RSS XML이 루트에 표시될 수 있다.
-- `node_modules/`, `public/`, `.quartz-cache/`, `private/`는 Git 추적 대상이 아니다.
-- 민감한 메모는 `private/`에 둔다. Quartz 설정과 Git 규칙에서 게시 및 추적 대상에서 제외된다.
-- GitHub 토큰, 비밀번호, API 키는 이 저장소나 이 문서에 기록하지 않는다.
-- Quartz 원본 원격은 `upstream` (`https://github.com/jackyzha0/quartz.git`)이며, 개인 저장소 원격은 `origin`이다.
+## 원격 저장소
+
+- `origin`: `https://github.com/jjerry-o0o/future-proof.git`
+- `upstream`: `https://github.com/jackyzha0/quartz.git`
+
+별도 Obsidian 메인 vault 백업 저장소는 `jjerry-o0o/obsidian-storage`이며, 이 블로그의 `content/`와는 별도 위치다.
